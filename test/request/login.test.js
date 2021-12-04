@@ -20,18 +20,17 @@ testConfig.config();
 const { email, password } = { email: 'someone@email.com', password: 'some-passs' };
 
 describe('When to process auth to create an user', () => {
-  it('should save user to database for not existing user', async (done) => {
+  it('should save user to database for not existing user', async () => {
     const res = await testConfig.request(testConfig.app).post('/signup').send({
       email,
       password
     });
     expect(res.statusCode).toBe(200);
     expect(res.body.token).toBeTruthy();
-    done();
   });
 
 
-  it('does not create a user with very short email, less than 6 characters', async (done) => {
+  it('does not create a user with very short email, less than 6 characters', async () => {
     const email = 't@a.a';
 
     const res = await testConfig.request(testConfig.app).post('/signup').send({
@@ -40,10 +39,9 @@ describe('When to process auth to create an user', () => {
     });
     expect(res.statusCode).toBe(422);
     expect(res.body.err).toBe('Please fill a valid email address');
-    done();
   });
 
-  it('does not create a user with very large email, more than 60 characters', async (done) => {
+  it('does not create a user with very large email, more than 60 characters', async () => {
     const email = 'some-large-email-larger-than-60-chars-because-life-is-that@email.com';
 
     const res = await testConfig.request(testConfig.app).post('/signup').send({
@@ -52,26 +50,11 @@ describe('When to process auth to create an user', () => {
     });
     expect(res.statusCode).toBe(422);
     expect(res.body.err).toBe('Maximum is 60 characters');
-    done();
   });
 });
 
 describe('When to process to signin an user', () => {
-  it('authenticates, but does not save and returns the token for an existing user', async (done) => {
-    await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ email, password: hash });
-    });
-
-    const res = await testConfig.request(testConfig.app).post('/signin').send({
-      email,
-      password
-    });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.token).toBeTruthy();
-    done();
-  });
-
-  it('does not signin with a bad password for an existing user', async (done) => {
+  it('does not signin with a bad password for an existing user', async () => {
     const someGoodPassword = 'some-good-password';
     const someBadPassword = 'some-bad-password';
     await bcrypt.hash(password, saltRounds).then((hash) => {
@@ -84,6 +67,5 @@ describe('When to process to signin an user', () => {
     });
     expect(res.statusCode).toBe(401);
     expect(res.body.err).toBe('Incorrect password or email');
-    done();
   });
 });

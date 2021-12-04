@@ -5,9 +5,19 @@ This application is jwt auth based on heroku node example, for being used as aut
 Fill the .env file for production and .env.development according to your targeted environment
 variables.
 
-Node version: 12.3.0
+Node version: 14.15.1
 
-Npm version: 6.13.7
+Npm version: 8.2.0
+
+Configure mongo:
+    $ docker run -d --name mongo -p 27017:27017 \
+	  -v /somewhere/onmyhost/mydatabase:/data/db \
+	  mvertes/alpine-mongo
+
+(For testing) To use the mongo shell client:
+    $ docker exec -ti mongo mongo
+    $ use livepoetry;
+    $ exit;
 
 Install packages:
     $ npm i
@@ -20,11 +30,3 @@ Run tests with jest using the following command:
 
 Run linter:
     $ npm run-script lint
-
-Configure mongo:
-    $ docker run -d --name mongo -p 27017:27017 \
-	  -v /somewhere/onmyhost/mydatabase:/data/db \
-	  mvertes/alpine-mongo
-
-To use the mongo shell client:
-    $ docker exec -ti mongo mongo

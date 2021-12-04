@@ -19,26 +19,23 @@ testConfig.config();
 const { email, password } = { email: 'someone@email.com', password: 'some-passs' };
 
 describe('When to try to validate an token', () => {
-  it('does not auth without any credentials nor the token', async (done) => {
+  it('does not auth without any credentials nor the token', async () => {
     const res = await testConfig.request(testConfig.app).post('/auth').send({});
     expect(res.statusCode).toBe(401);
-    done();
   });
 
-  it('confirms auth if the correct token in header', async (done) => {
+  it('confirms auth if the correct token in header', async () => {
     const wrongKey = 'wrong-token-key';
     const token = jwt.sign({ email: 'some-user@email.com' }, wrongKey, { expiresIn: '24h' });
 
     const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
     expect(res.statusCode).toBe(401);
-    done();
   });
 
-  it('confirms auth if the correct token in header', async (done) => {
+  it('confirms auth if the correct token in header', async () => {
     const token = jwt.sign({ email: 'some-user@email.com' }, process.env.TOKEN_KEY, { expiresIn: '24h' });
 
     const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
     expect(res.statusCode).toBe(200);
-    done();
   });
 });

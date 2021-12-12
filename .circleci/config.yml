@@ -12,8 +12,5 @@ jobs:
           name: install-packages
           command: npm install
       - run:
-          name: linter-with-eslint
-          command: npm run-script lint
-      - run:
           name: test
           command: npm test

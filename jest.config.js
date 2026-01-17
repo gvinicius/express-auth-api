@@ -5,5 +5,9 @@
  * Distributed under terms of the MIT license.
  */
 module.exports = {
-  setupFilesAfterEnv: ['./jest.setup.js']
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['./jest.setup.js'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/'
+  ]
 };

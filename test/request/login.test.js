@@ -57,9 +57,8 @@ describe('When to process to signin an user', () => {
   it('does not signin with a bad password for an existing user', async () => {
     const someGoodPassword = 'some-good-password';
     const someBadPassword = 'some-bad-password';
-    await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ email, password: someGoodPassword });
-    });
+    const hash = await bcrypt.hash(someGoodPassword, saltRounds);
+    await User.collection.create({ email, password: hash });
 
     const res = await testConfig.request(testConfig.app).post('/signin').send({
       email,

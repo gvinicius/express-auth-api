@@ -3,8 +3,20 @@ const AbortController = global.AbortController || require('abort-controller');
 const providers = [
   require('./providers/poetrydb'),
   require('./providers/poemist'),
-  require('./providers/quotable')
+  require('./providers/quotable'),
+  require('./providers/wikisource-pt')
 ];
+
+// Simple in-memory TTL cache for aggregate() results
+const CACHE_TTL_MS = parseInt(process.env.QUOTES_CACHE_TTL_MS || '15000', 10);
+const cache = new Map();
+
+function makeKey(params) {
+  const keys = Object.keys(params || {}).sort();
+  const obj = {};
+  keys.forEach((k) => { obj[k] = params[k]; });
+  return JSON.stringify(obj);
+}
 
 function pickProviders(limitTo) {
   if (!limitTo) return providers;
@@ -18,6 +30,10 @@ async function aggregate(params = {}, options = {}) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort('timeout'), timeoutMs);
   try {
+    const key = makeKey(params);
+    const now = Date.now();
+    const entry = cache.get(key);
+    if (entry && entry.exp > now) return entry.val;
     const settled = await Promise.allSettled(selected.map((p) => p.search(params, { ...options, signal: controller.signal })));
     const results = [];
     settled.forEach((s, i) => {
@@ -27,6 +43,7 @@ async function aggregate(params = {}, options = {}) {
         console.warn(`Provider ${selected[i].key} failed`, s.reason && s.reason.message);
       }
     });
+    cache.set(key, { val: results, exp: now + CACHE_TTL_MS });
     return results;
   }
   finally {
@@ -35,4 +52,3 @@ async function aggregate(params = {}, options = {}) {
 }
 
 module.exports = { aggregate };
-

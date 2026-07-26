@@ -129,10 +129,11 @@ Server will run on `http://localhost:5000` by default (or the PORT specified in 
 
 This service now aggregates poetry quotations from multiple open APIs and exposes unified endpoints.
 
-- Sources: PoetryDB (classic English poetry), Poemist (random poems), Quotable (poetry-tagged quotes)
+- Sources: PoetryDB (classic English poetry), Poemist (random poems), Quotable (poetry-tagged quotes), Wikisource‑PT (Portuguese poems)
 
 ### GET `/quotes`
 - Query params: `author`, `lang`, `genre`, `q` (free text), `source` (comma-separated: `poetrydb,poemist,quotable`), `limit`
+  - You can also include `wikisource-pt` for Portuguese sources
 - Example: `/quotes?author=T.S.%20Eliot&q=April&source=poetrydb,quotable`
 
 Response:
@@ -166,6 +167,7 @@ Response:
 Notes:
 - External calls use public, no-auth endpoints. Availability may vary.
 - `lang` and `genre` are supported when the upstream source provides the metadata; otherwise best-effort filtering is applied client-side.
+- Simple in-memory caching (TTL via `QUOTES_CACHE_TTL_MS`) and rate limiting (`RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX`) are enabled.
 
 ## Deployment
 

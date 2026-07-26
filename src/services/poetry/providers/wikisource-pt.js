@@ -85,14 +85,18 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
   );
 
   const results = [];
+  const texts = await Promise.all(
+    picked.map((it) => fetchPageExtract(it.title, fetchImpl, signal))
+  );
+
   for (let i = 0; i < picked.length; i += 1) {
     const it = picked[i];
-    const text = await fetchPageExtract(
-      it.title,
-      fetchImpl,
-      signal
-    ); // eslint-disable-line no-await-in-loop
-    if (!text) continue; // eslint-disable-line no-continue
+    const text = texts[i];
+    if (!text) {
+      // Skip entries without extracted text
+      // eslint-disable-next-line no-continue
+      continue;
+    }
     results.push({
       text,
       author: params.author || 'Desconhecido',

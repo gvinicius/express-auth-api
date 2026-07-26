@@ -8,6 +8,7 @@
 const currentEnv = process.env;
 const testConfig = {};
 const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 const User = require('./models/user');
 
 testConfig.db = require('./db/db');
@@ -18,8 +19,12 @@ testConfig.app = require('./src/app');
 process.env = { TOKEN_KEY: 'SOME-KEY' };
 
 testConfig.config = function () {
+  let mongoServer;
   beforeAll(async () => {
-    testConfig.db.start();
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    process.env.MONGODB_URI = uri;
+    await testConfig.db.start();
   });
 
   afterEach(async () => {
@@ -29,6 +34,9 @@ testConfig.config = function () {
   afterAll(async () => {
     await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
+    if (mongoServer) {
+      await mongoServer.stop();
+    }
   });
 };
 

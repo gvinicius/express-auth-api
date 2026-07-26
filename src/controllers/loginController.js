@@ -1,19 +1,19 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../../models/user.js');
-const tokenHelper = require('../helpers/tokenHelper.js');
+const User = require('../../models/user');
+const tokenHelper = require('../helpers/tokenHelper');
 
 const saltRounds = 10;
 const login = {};
 
-const mongoose = require('mongoose');
+// no mongoose import needed here
 
 login.signup = function (req, res, next) {
   const { email, password } = req.body;
 
-  User.collection.findOne({ email }).exec((err, user) => {
-    if (err) {
-      res.status(401).json({ err });
+  User.collection.findOne({ email }).exec((findErr, user) => {
+    if (findErr) {
+      res.status(401).json({ err: findErr });
     }
     else if (user !== null) {
       res.status(409).json({ err: 'User already exists' });
@@ -22,12 +22,12 @@ login.signup = function (req, res, next) {
       bcrypt.hash(password, saltRounds).then((hash) => {
         User.collection.create({ email, password: hash }).then((newUser) => {
           res.status(200).json({ token: tokenHelper.generateToken(newUser.email) });
-        }).catch((err) => {
-          if (err.name == 'ValidationError') {
-            res.status(422).json({ err: err.errors.email.message });
+        }).catch((createErr) => {
+          if (createErr.name === 'ValidationError') {
+            res.status(422).json({ err: createErr.errors.email.message });
           }
           else {
-            res.status(500).json(err);
+            res.status(500).json(createErr);
           }
         });
       }).catch((hashErr) => {
@@ -40,9 +40,9 @@ login.signup = function (req, res, next) {
 login.signin = function (req, res, next) {
   const { email, password } = req.body;
 
-  User.collection.findOne({ email }).exec((err, user) => {
-    if (err) {
-      res.status(401).json({ err });
+  User.collection.findOne({ email }).exec((findErr, user) => {
+    if (findErr) {
+      res.status(401).json({ err: findErr });
     }
     else if (user === null) {
       res.status(401).json({ err: 'Incorrect password or email' });

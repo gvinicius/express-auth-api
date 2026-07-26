@@ -12,9 +12,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/livepoetr
 
 db.start = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/livepoetry', {
-      useNewUrlParser: true
-    });
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/livepoetry', { useNewUrlParser: true });
   }
   catch (e) {
     console.log(e);

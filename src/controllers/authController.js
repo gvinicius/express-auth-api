@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../../models/user.js');
+const User = require('../../models/user');
 
 const saltRounds = 10;
 const auth = {};
 
-const mongoose = require('mongoose');
+// no mongoose import needed here
 
 auth.proctectRoute = function (req, res, next) {
   if (req.headers.authorization) {
@@ -20,7 +20,7 @@ auth.proctectRoute = function (req, res, next) {
     });
   }
   else {
-    res.status(401).json({ err: 'Missing token'});
+    res.status(401).json({ err: 'Missing token' });
   }
 };
 

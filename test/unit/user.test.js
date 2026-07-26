@@ -5,8 +5,8 @@
  * Distributed under terms of the MIT license.
  */
 const bcrypt = require('bcrypt');
-const User = require('../../models/user.js');
-const testConfig = require('../../testConfig.js');
+const User = require('../../models/user');
+const testConfig = require('../../testConfig');
 
 const saltRounds = 10;
 testConfig.config();
@@ -26,8 +26,8 @@ describe('When to create an user', () => {
     const email = '';
 
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
-        expect(err.errors.email.message).toBe("Path `email` is required.");
+      User.collection.create({ email, password: hash }).then(() => null).catch((err) => {
+        expect(err.errors.email.message).toBe('Path `email` is required.');
       });
     });
   });
@@ -36,7 +36,7 @@ describe('When to create an user', () => {
     const email = 't@a.a';
 
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
+      User.collection.create({ email, password: hash }).then(() => null).catch((err) => {
         expect(err.errors.email.message).toBe('Please fill a valid email address');
       });
     });
@@ -46,7 +46,7 @@ describe('When to create an user', () => {
     const email = 'some-large-email-larger-than-60-chars-because-life-is-that@email.com';
 
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
+      User.collection.create({ email, password: hash }).then(() => null).catch((err) => {
         expect(err.errors.email.message).toBe('Maximum is 60 characters');
       });
     });

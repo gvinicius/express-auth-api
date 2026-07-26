@@ -8,12 +8,12 @@
 const currentEnv = process.env;
 const testConfig = {};
 const mongoose = require('mongoose');
-const User = require('./models/user.js');
+const User = require('./models/user');
 
-testConfig.db = require('./db/db.js');
+testConfig.db = require('./db/db');
 
 testConfig.request = require('supertest');
-testConfig.app = require('./src/app.js');
+testConfig.app = require('./src/app');
 
 process.env = { TOKEN_KEY: 'SOME-KEY' };
 

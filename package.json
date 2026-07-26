@@ -8,40 +8,57 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production nodemon server.js",
+    "start": "NODE_ENV=production node server.js",
     "test": "jest --verbose --coverage --forceExit --maxWorkers=1",
     "lintfix": "eslint \"**/*.js\" --fix",
     "lint": "eslint \"**/*.js\""
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.5.4",
+    "@babel/eslint-parser": "^7.25.7",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.3",
     "compression": "^1.7.4",
-    "dotenv": "^8.2.0",
-    "ejs": "^3.1.7",
-    "express": "^4.17.1",
-    "express-async-handler": "^1.1.4",
-    "hosted-git-info": ">=2.8.9",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.3",
-    "lodash": ">=4.17.21",
-    "mongoose": "^6.0.14"
+    "lodash": "^4.17.21",
+    "mongoose": "^6.13.10"
   },
   "devDependencies": {
-    "eslint": "^8.4.0",
+    "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.0",
-    "jest": "^27.4.3",
-    "supertest": "^4.0.2",
-    "tape": "^4.7.0"
+    "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
   },
   "eslintConfig": {
     "extends": "airbnb-base",
     "env": {
       "es6": true,
-      "browser": true
+      "browser": true,
+      "node": true,
+      "jest": true
     },
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.js",
+          "**/*.test.js",
+          "jest.setup.js",
+          "testConfig.js"
+        ],
+        "rules": {
+          "import/no-extraneous-dependencies": "off",
+          "import/order": "off",
+          "import/newline-after-import": "off",
+          "no-shadow": "off",
+          "no-multiple-empty-lines": "off"
+        }
+      }
+    ],
     "rules": {
       "brace-style": [
         "error",
@@ -59,7 +76,8 @@
       ],
       "one-var": [
         "off"
-      ]
+      ],
+      "import/extensions": "off"
     }
   },
   "repository": {

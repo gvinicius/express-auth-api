@@ -5,8 +5,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const compression = require('compression');
 
-const auth = require('./controllers/authController.js');
-const login = require('./controllers/loginController.js');
+const auth = require('./controllers/authController');
+const login = require('./controllers/loginController');
 
 app.use(compression());
 app.use(bodyParser.json());

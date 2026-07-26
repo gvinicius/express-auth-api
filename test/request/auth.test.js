@@ -5,7 +5,7 @@
  *
  * Distributed under terms of the MIT license.
  */
-const User = require('../../models/user.js');
+const User = require('../../models/user');
 
 const currentEnv = process.env;
 const jwt = require('jsonwebtoken');
@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-const testConfig = require('../../testConfig.js');
+const testConfig = require('../../testConfig');
 testConfig.config();
 const { email, password } = { email: 'someone@email.com', password: 'some-passs' };
 

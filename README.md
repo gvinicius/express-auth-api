@@ -125,6 +125,48 @@ npm start
 
 Server will run on `http://localhost:5000` by default (or the PORT specified in your environment variables).
 
+## Poetry Quotes API
+
+This service now aggregates poetry quotations from multiple open APIs and exposes unified endpoints.
+
+- Sources: PoetryDB (classic English poetry), Poemist (random poems), Quotable (poetry-tagged quotes)
+
+### GET `/quotes`
+- Query params: `author`, `lang`, `genre`, `q` (free text), `source` (comma-separated: `poetrydb,poemist,quotable`), `limit`
+- Example: `/quotes?author=T.S.%20Eliot&q=April&source=poetrydb,quotable`
+
+Response:
+```json
+{
+  "count": 2,
+  "results": [
+    {
+      "text": "April is the cruellest month...",
+      "author": "T. S. Eliot",
+      "title": "The Waste Land",
+      "source": "poetrydb",
+      "language": "en",
+      "tags": ["lines:433"]
+    }
+  ]
+}
+```
+
+### GET `/quotes/random`
+- Returns a random selection from the configured sources.
+- Optional query: `source`, `limit`
+
+### GET `/authors`
+- Finds authors based on results from sources.
+- Query: `author` (partial match), `source`
+
+### GET `/health`
+- Simple service health probe: `{ status: "ok" }`
+
+Notes:
+- External calls use public, no-auth endpoints. Availability may vary.
+- `lang` and `genre` are supported when the upstream source provides the metadata; otherwise best-effort filtering is applied client-side.
+
 ## Deployment
 
 This application is ready for deployment on Heroku or any Node.js hosting platform. Ensure your environment variables are properly configured in your hosting provider's settings.

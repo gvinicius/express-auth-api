@@ -23,18 +23,17 @@ A JWT-based authentication API built with Node.js and Express.js, forked from th
 
 ### 1. Configure MongoDB
 
-Run MongoDB using Docker:
+Run MongoDB using Docker (Compose):
 
 ```bash
-docker run -d --name mongo -p 27017:27017 \
-  -v /path/to/your/data:/data/db \
-  mvertes/alpine-mongo
+docker compose -f dev/mongo-compose.yml up -d mongo
+# wait for healthcheck to pass
 ```
 
 For testing, access the MongoDB shell:
 
 ```bash
-docker exec -ti mongo mongo
+docker exec -ti express-auth-api-mongo mongosh
 use your_database_name;
 exit;
 ```

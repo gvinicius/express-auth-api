@@ -3,9 +3,6 @@
 // - RATE_LIMIT_WINDOW_MS (default 60000)
 // - RATE_LIMIT_MAX (default 120)
 
-const WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10);
-const MAX = parseInt(process.env.RATE_LIMIT_MAX || '120', 10);
-
 const buckets = new Map();
 
 function makeKey(req) {
@@ -15,6 +12,8 @@ function makeKey(req) {
 }
 
 module.exports = function rateLimit(req, res, next) {
+  const WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10);
+  const MAX = parseInt(process.env.RATE_LIMIT_MAX || '120', 10);
   const key = makeKey(req);
   const now = Date.now();
   let b = buckets.get(key);
@@ -37,4 +36,3 @@ module.exports = function rateLimit(req, res, next) {
   res.setHeader('X-RateLimit-Remaining', String(Math.max(0, MAX - b.count)));
   return next();
 };
-

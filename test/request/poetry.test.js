@@ -1,7 +1,6 @@
 const testConfig = require('../../testConfig');
 
-const request = testConfig.request;
-const app = testConfig.app;
+const { request, app } = testConfig;
 
 testConfig.config();
 
@@ -32,8 +31,18 @@ describe('Poetry API', () => {
           ok: true,
           json: async () => ({
             results: [
-              { content: 'Poetry is when an emotion has found its thought.', author: 'Robert Frost', language: 'en', tags: ['poetry'] },
-              { content: 'Tudo vale a pena se a alma não é pequena.', author: 'Fernando Pessoa', language: 'pt', tags: ['poesia'] }
+              {
+                content: 'Poetry is when an emotion has found its thought.',
+                author: 'Robert Frost',
+                language: 'en',
+                tags: ['poetry']
+              },
+              {
+                content: 'Tudo vale a pena se a alma não é pequena.',
+                author: 'Fernando Pessoa',
+                language: 'pt',
+                tags: ['poesia']
+              }
             ]
           })
         };
@@ -43,7 +52,12 @@ describe('Poetry API', () => {
         return {
           ok: true,
           json: async () => ([
-            { title: 'Random Poem', content: 'Some random poetic lines.', poet: { name: 'Anon' }, tags: ['poetry'] }
+            {
+              title: 'Random Poem',
+              content: 'Some random poetic lines.',
+              poet: { name: 'Anon' },
+              tags: ['poetry']
+            }
           ])
         };
       }
@@ -78,7 +92,12 @@ describe('Poetry API', () => {
   it('GET /quotes filters by author and q', async () => {
     const res = await request(app)
       .get('/quotes')
-      .query({ author: 'T. S. Eliot', q: 'April', source: 'poetrydb', limit: 3 });
+      .query({
+        author: 'T. S. Eliot',
+        q: 'April',
+        source: 'poetrydb',
+        limit: 3
+      });
     expect(res.status).toBe(200);
     expect(res.body.count).toBeGreaterThanOrEqual(1);
     const first = res.body.results[0];
@@ -89,7 +108,9 @@ describe('Poetry API', () => {
   it('GET /authors returns unique author names', async () => {
     const res = await request(app)
       .get('/authors')
-      .query({ source: 'poetrydb,quotable' });
+      .query({
+        source: 'poetrydb,quotable'
+      });
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.results)).toBe(true);
     expect(res.body.results.length).toBeGreaterThanOrEqual(2);
@@ -105,4 +126,3 @@ describe('Poetry API', () => {
     expect(r3.status).toBe(429);
   });
 });
-

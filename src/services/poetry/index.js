@@ -1,11 +1,11 @@
-const AbortController = global.AbortController || require('abort-controller');
+const { AbortController } = global;
 
-const providers = [
-  require('./providers/poetrydb'),
-  require('./providers/poemist'),
-  require('./providers/quotable'),
-  require('./providers/wikisource-pt')
-];
+const poetrydb = require('./providers/poetrydb');
+const poemist = require('./providers/poemist');
+const quotable = require('./providers/quotable');
+const wikisourcePt = require('./providers/wikisource-pt');
+
+const providers = [poetrydb, poemist, quotable, wikisourcePt];
 
 // Simple in-memory TTL cache for aggregate() results
 const CACHE_TTL_MS = parseInt(process.env.QUOTES_CACHE_TTL_MS || '15000', 10);
@@ -14,7 +14,9 @@ const cache = new Map();
 function makeKey(params) {
   const keys = Object.keys(params || {}).sort();
   const obj = {};
-  keys.forEach((k) => { obj[k] = params[k]; });
+  keys.forEach((k) => {
+    obj[k] = params[k];
+  });
   return JSON.stringify(obj);
 }
 
@@ -34,7 +36,12 @@ async function aggregate(params = {}, options = {}) {
     const now = Date.now();
     const entry = cache.get(key);
     if (entry && entry.exp > now) return entry.val;
-    const settled = await Promise.allSettled(selected.map((p) => p.search(params, { ...options, signal: controller.signal })));
+    const settled = await Promise.allSettled(
+      selected.map((p) => p.search(
+        params,
+        { ...options, signal: controller.signal }
+      ))
+    );
     const results = [];
     settled.forEach((s, i) => {
       if (s.status === 'fulfilled' && Array.isArray(s.value)) results.push(...s.value);

@@ -18,7 +18,10 @@ function buildUrl(params = {}) {
 
 async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
   const url = buildUrl(params);
-  const res = await fetchImpl(url, { signal, headers: { 'User-Agent': 'express-auth-api/poetry' } });
+  const res = await fetchImpl(url, {
+    signal,
+    headers: { 'User-Agent': 'express-auth-api/poetry' }
+  });
   if (!res.ok) throw new Error(`quotable http ${res.status}`);
   const data = await res.json();
   const results = Array.isArray(data.results) ? data.results : [];
@@ -40,4 +43,3 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
 }
 
 module.exports = { key: 'quotable', search };
-

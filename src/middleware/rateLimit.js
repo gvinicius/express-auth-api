@@ -6,7 +6,7 @@
 const buckets = new Map();
 
 function makeKey(req) {
-  const ip = (req.ip || req.connection?.remoteAddress || 'unknown');
+  const ip = (req.ip || (req.connection && req.connection.remoteAddress) || 'unknown');
   // Single global bucket per IP is fine for this API size
   return ip;
 }

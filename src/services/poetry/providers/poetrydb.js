@@ -28,7 +28,10 @@ function linesToQuote(lines) {
 }
 
 async function fetchPoems(url, fetchImpl, abortSignal) {
-  const res = await fetchImpl(url, { signal: abortSignal, headers: { 'User-Agent': 'express-auth-api/poetry' } });
+  const res = await fetchImpl(url, {
+    signal: abortSignal,
+    headers: { 'User-Agent': 'express-auth-api/poetry' }
+  });
   if (!res.ok) throw new Error(`poetrydb http ${res.status}`);
   const data = await res.json();
   if (!Array.isArray(data)) return [];
@@ -63,4 +66,3 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
 }
 
 module.exports = { key: 'poetrydb', search };
-

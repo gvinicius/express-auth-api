@@ -7,7 +7,10 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
   // Poemist supports only random poems; return some and then filter client-side
   const count = Math.min(Math.max(parseInt(params.limit || 5, 10) || 5, 1), 20);
   const url = `${BASE}/randompoems`;
-  const res = await fetchImpl(url, { signal, headers: { 'User-Agent': 'express-auth-api/poetry' } });
+  const res = await fetchImpl(url, {
+    signal,
+    headers: { 'User-Agent': 'express-auth-api/poetry' }
+  });
   if (!res.ok) throw new Error(`poemist http ${res.status}`);
   const data = await res.json();
   const items = Array.isArray(data) ? data.slice(0, count) : [];
@@ -22,7 +25,9 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
     url: p.url || undefined
   })).filter((x) => x.text && x.text.length);
 
-  const { author, q, genre, lang } = params;
+  const {
+    author, q, genre, lang
+  } = params;
   if (author) {
     const alc = author.toLowerCase();
     out = out.filter((x) => x.author.toLowerCase().includes(alc));
@@ -45,4 +50,3 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
 }
 
 module.exports = { key: 'poemist', search };
-

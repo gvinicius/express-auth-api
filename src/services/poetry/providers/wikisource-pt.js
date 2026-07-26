@@ -52,7 +52,10 @@ function wikitextToPlain(text) {
 }
 
 async function fetchJson(url, fetchImpl, signal) {
-  const res = await fetchImpl(url, { signal, headers: { 'User-Agent': 'express-auth-api/poetry' } });
+  const res = await fetchImpl(url, {
+    signal,
+    headers: { 'User-Agent': 'express-auth-api/poetry' }
+  });
   if (!res.ok) throw new Error(`wikisource-pt http ${res.status}`);
   return res.json();
 }
@@ -73,12 +76,22 @@ async function fetchPageExtract(title, fetchImpl, signal) {
 async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
   const data = await fetchJson(buildSearchUrl(params), fetchImpl, signal);
   const items = (data && data.query && Array.isArray(data.query.search)) ? data.query.search : [];
-  const picked = items.slice(0, Math.min(items.length, Math.min(parseInt(params.limit || 5, 10) || 5, 20)));
+  const picked = items.slice(
+    0,
+    Math.min(
+      items.length,
+      Math.min(parseInt(params.limit || 5, 10) || 5, 20)
+    )
+  );
 
   const results = [];
   for (let i = 0; i < picked.length; i += 1) {
     const it = picked[i];
-    const text = await fetchPageExtract(it.title, fetchImpl, signal); // eslint-disable-line no-await-in-loop
+    const text = await fetchPageExtract(
+      it.title,
+      fetchImpl,
+      signal
+    ); // eslint-disable-line no-await-in-loop
     if (!text) continue; // eslint-disable-line no-continue
     results.push({
       text,
@@ -95,4 +108,3 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
 }
 
 module.exports = { key: 'wikisource-pt', search };
-

@@ -7,8 +7,10 @@ const buckets = new Map();
 
 function makeKey(req) {
   const ip = (req.ip || (req.connection && req.connection.remoteAddress) || 'unknown');
-  // Single global bucket per IP is fine for this API size
-  return ip;
+  // Use originalUrl to include query params, isolating limits per distinct request pattern
+  const path = `${req.originalUrl || ((req.baseUrl || '') + (req.path || ''))}`;
+  // Separate buckets per IP and route path
+  return `${ip}|${path}`;
 }
 
 module.exports = function rateLimit(req, res, next) {

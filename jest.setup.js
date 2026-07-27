@@ -7,9 +7,5 @@
 jest.setTimeout(30000);
 
 // Ensure Mongoose does not warn about strictQuery default change in tests
-try {
-  const mongoose = require('mongoose');
-  mongoose.set('strictQuery', true);
-} catch (e) {
-  // no-op if mongoose isn't available yet
-}
+const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);

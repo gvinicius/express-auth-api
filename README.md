@@ -23,18 +23,17 @@ A JWT-based authentication API built with Node.js and Express.js, forked from th
 
 ### 1. Configure MongoDB
 
-Run MongoDB using Docker:
+Run MongoDB using Docker (Compose):
 
 ```bash
-docker run -d --name mongo -p 27017:27017 \
-  -v /path/to/your/data:/data/db \
-  mvertes/alpine-mongo
+docker compose -f dev/mongo-compose.yml up -d mongo
+# wait for healthcheck to pass
 ```
 
 For testing, access the MongoDB shell:
 
 ```bash
-docker exec -ti mongo mongo
+docker exec -ti express-auth-api-mongo mongosh
 use your_database_name;
 exit;
 ```
@@ -124,6 +123,50 @@ npm start
 ```
 
 Server will run on `http://localhost:5000` by default (or the PORT specified in your environment variables).
+
+## Poetry Quotes API
+
+This service now aggregates poetry quotations from multiple open APIs and exposes unified endpoints.
+
+- Sources: PoetryDB (classic English poetry), Poemist (random poems), Quotable (poetry-tagged quotes), Wikisource‑PT (Portuguese poems)
+
+### GET `/quotes`
+- Query params: `author`, `lang`, `genre`, `q` (free text), `source` (comma-separated: `poetrydb,poemist,quotable`), `limit`
+  - You can also include `wikisource-pt` for Portuguese sources
+- Example: `/quotes?author=T.S.%20Eliot&q=April&source=poetrydb,quotable`
+
+Response:
+```json
+{
+  "count": 2,
+  "results": [
+    {
+      "text": "April is the cruellest month...",
+      "author": "T. S. Eliot",
+      "title": "The Waste Land",
+      "source": "poetrydb",
+      "language": "en",
+      "tags": ["lines:433"]
+    }
+  ]
+}
+```
+
+### GET `/quotes/random`
+- Returns a random selection from the configured sources.
+- Optional query: `source`, `limit`
+
+### GET `/authors`
+- Finds authors based on results from sources.
+- Query: `author` (partial match), `source`
+
+### GET `/health`
+- Simple service health probe: `{ status: "ok" }`
+
+Notes:
+- External calls use public, no-auth endpoints. Availability may vary.
+- `lang` and `genre` are supported when the upstream source provides the metadata; otherwise best-effort filtering is applied client-side.
+- Simple in-memory caching (TTL via `QUOTES_CACHE_TTL_MS`) and rate limiting (`RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX`) are enabled.
 
 ## Deployment
 

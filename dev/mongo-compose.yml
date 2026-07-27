@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    container_name: express-auth-api-mongo
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:
+    driver: local
+

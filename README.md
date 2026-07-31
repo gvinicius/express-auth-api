@@ -168,6 +168,38 @@ Notes:
 - `lang` and `genre` are supported when the upstream source provides the metadata; otherwise best-effort filtering is applied client-side.
 - Simple in-memory caching (TTL via `QUOTES_CACHE_TTL_MS`) and rate limiting (`RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX`) are enabled.
 
+## Poems API
+
+Full-text poems from [PoetryDB](https://poetrydb.org) (public domain English poetry). Unlike `/quotes`, these endpoints return complete `lines` arrays.
+
+### GET `/poems`
+- Returns a random sample of poems.
+- Query: `limit` (optional, default 5, max 20)
+- Example: `/poems?limit=3`
+
+### GET `/poems/search`
+- Search poems by `author`, `title`, and/or free-text `q` (matched against lines).
+- At least one of `author`, `title`, or `q` is required (otherwise `400`).
+- Query: `author`, `title`, `q`, `limit` (optional, default 10, max 20)
+- Example: `/poems/search?author=T.%20S.%20Eliot&q=April`
+
+Response:
+```json
+{
+  "count": 1,
+  "results": [
+    {
+      "title": "The Waste Land",
+      "author": "T. S. Eliot",
+      "lines": ["April is the cruellest month,", "breeding lilacs out of the dead land;"],
+      "linecount": 2,
+      "source": "poetrydb",
+      "language": "en"
+    }
+  ]
+}
+```
+
 ## Deployment
 
 This application is ready for deployment on Heroku or any Node.js hosting platform. Ensure your environment variables are properly configured in your hosting provider's settings.

@@ -1,7 +1,9 @@
 const {
   clampLimit,
   buildUrl,
-  normalize
+  normalize,
+  list,
+  search
 } = require('../../src/services/poetry/poems');
 
 describe('poems service helpers', () => {
@@ -76,6 +78,62 @@ describe('poems service helpers', () => {
       const out = normalize([{ title: 'Untitled', lines: ['a', 'b'] }]);
       expect(out[0].author).toBe('Unknown');
       expect(out[0].linecount).toBe(2);
+    });
+  });
+
+  describe('list', () => {
+    it('fetches random poems and returns normalized results', async () => {
+      const fetchImpl = jest.fn(async () => ({
+        ok: true,
+        json: async () => ([
+          { title: 'Ode', author: 'Keats', lines: ['My heart aches'], linecount: '1' }
+        ])
+      }));
+      const out = await list({ limit: 2 }, { fetchImpl });
+      expect(fetchImpl).toHaveBeenCalledWith(
+        'https://poetrydb.org/random/2',
+        expect.objectContaining({ headers: expect.any(Object) })
+      );
+      expect(out).toHaveLength(1);
+      expect(out[0].lines).toEqual(['My heart aches']);
+      expect(out[0].source).toBe('poetrydb');
+    });
+  });
+
+  describe('search', () => {
+    it('rejects when no author, title, or q provided', async () => {
+      await expect(search({})).rejects.toMatchObject({ code: 'VALIDATION' });
+    });
+
+    it('searches by author and filters client-side by q', async () => {
+      const fetchImpl = jest.fn(async () => ({
+        ok: true,
+        json: async () => ([
+          { title: 'The Waste Land', author: 'T. S. Eliot', lines: ['April is the cruellest month'] },
+          { title: 'Prufrock', author: 'T. S. Eliot', lines: ['Let us go then'] }
+        ])
+      }));
+      const out = await search({ author: 'T. S. Eliot', q: 'April' }, { fetchImpl });
+      expect(fetchImpl.mock.calls[0][0]).toContain('/author/');
+      expect(out).toHaveLength(1);
+      expect(out[0].title).toBe('The Waste Land');
+    });
+
+    it('searches by title', async () => {
+      const fetchImpl = jest.fn(async () => ({
+        ok: true,
+        json: async () => ([
+          { title: 'Ozymandias', author: 'Shelley', lines: ['Look on my Works'] }
+        ])
+      }));
+      const out = await search({ title: 'Ozymandias' }, { fetchImpl });
+      expect(fetchImpl.mock.calls[0][0]).toBe('https://poetrydb.org/title/Ozymandias');
+      expect(out[0].author).toBe('Shelley');
+    });
+
+    it('throws when upstream returns non-OK status', async () => {
+      const fetchImpl = jest.fn(async () => ({ ok: false, status: 500 }));
+      await expect(search({ q: 'night' }, { fetchImpl })).rejects.toThrow(/poetrydb http/);
     });
   });
 });

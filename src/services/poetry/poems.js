@@ -10,7 +10,9 @@ function clampLimit(value, fallback) {
 }
 
 function buildUrl(params = {}) {
-  const { title, author, q, limit } = params;
+  const {
+    title, author, q, limit
+  } = params;
   if (title) return `${BASE}/title/${encodeURIComponent(title)}`;
   if (author) return `${BASE}/author/${encodeURIComponent(author)}`;
   if (q) return `${BASE}/lines/${encodeURIComponent(q)}`;
@@ -83,7 +85,9 @@ async function search(params = {}, { fetchImpl = fetch, signal } = {}) {
     throw err;
   }
   const limit = clampLimit(params.limit, 10);
-  const url = buildUrl({ author, title, q, limit });
+  const url = buildUrl({
+    author, title, q, limit
+  });
   const poems = await fetchPoems(url, fetchImpl, signal);
   let out = normalize(poems);
   // Apply remaining params as client-side filters when endpoint was chosen by priority

@@ -86,7 +86,9 @@ describe('poems service helpers', () => {
       const fetchImpl = jest.fn(async () => ({
         ok: true,
         json: async () => ([
-          { title: 'Ode', author: 'Keats', lines: ['My heart aches'], linecount: '1' }
+          {
+            title: 'Ode', author: 'Keats', lines: ['My heart aches'], linecount: '1'
+          }
         ])
       }));
       const out = await list({ limit: 2 }, { fetchImpl });

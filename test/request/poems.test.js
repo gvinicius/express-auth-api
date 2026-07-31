@@ -131,11 +131,11 @@ describe('Poems API', () => {
   });
 
   it('applies rate limiting to /poems', async () => {
-    const r1 = await request(app).get('/poems');
+    const r1 = await request(app).get('/poems').query({ limit: 4 });
     expect(r1.status).toBe(200);
-    const r2 = await request(app).get('/poems');
+    const r2 = await request(app).get('/poems').query({ limit: 4 });
     expect(r2.status).toBe(200);
-    const r3 = await request(app).get('/poems');
+    const r3 = await request(app).get('/poems').query({ limit: 4 });
     expect(r3.status).toBe(429);
   });
 });

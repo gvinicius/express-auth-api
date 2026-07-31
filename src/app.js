@@ -8,6 +8,7 @@ const compression = require('compression');
 const auth = require('./controllers/authController');
 const login = require('./controllers/loginController');
 const poetry = require('./controllers/poetryController');
+const poems = require('./controllers/poemsController');
 const rateLimit = require('./middleware/rateLimit');
 
 app.use(compression());
@@ -22,5 +23,9 @@ app.get('/health', poetry.health);
 app.get('/quotes', rateLimit, poetry.getQuotes);
 app.get('/quotes/random', rateLimit, poetry.getRandom);
 app.get('/authors', rateLimit, poetry.searchAuthors);
+
+// Poems routes (full text via PoetryDB)
+app.get('/poems', rateLimit, poems.list);
+app.get('/poems/search', rateLimit, poems.search);
 
 module.exports = app;
